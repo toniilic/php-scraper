@@ -62,8 +62,6 @@ foreach($pageUrls as $url) {
     $crawler->filter('.blog_box_left')->each(function ($node) use ($crawler, $url) {
 
 
-        $data = array();
-
         $title = $crawler->filter('.h2_blog_box_title')->text();
         $title = trim($title);
 
