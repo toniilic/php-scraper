@@ -2,7 +2,6 @@
 
 require __DIR__ . '/../../vendor/autoload.php';
 
-
 use Goutte\Client;
 use GuzzleHttp\Client as GuzzleClient;
 
@@ -26,11 +25,13 @@ $lastScrapedUrl = ""; // TODO: get last scraped url from database
 // .filter_controler_forward_button a
 
 
-$url = "https://www.nonstopbonus.com/";
+$url = "https://uk.hotels.com/search.do?resolved-location=CITY%3A549499%3AUNKNOWN%3AUNKNOWN&destination-id=549499&q-destination=London,%20England,%20United%20Kingdom&q-check-in=2019-01-12&q-check-out=2019-01-13&q-rooms=1&q-room-0-adults=2&q-room-0-children=0";
 $crawler = $client->request('GET', $url);
 
 
-$crawler->filter('.bonus_page > a')->each(function ($node) use ($crawler, &$pageUrls) {
+
+
+$crawler->filter('.p-name')->each(function ($node) use ($crawler, &$pageUrls) {
 
     $linksCrawler = $crawler->selectLink(trim($node->text()));
     $link = $linksCrawler->link();
@@ -43,13 +44,15 @@ $crawler->filter('.bonus_page > a')->each(function ($node) use ($crawler, &$page
 
 dump($pageUrls);
 
+$locale = 'uk';
+$city = 'London';
 
 foreach($pageUrls as $url) {
     $crawler = $client->request('GET', $url);
 
-
-    $title = $crawler->filter('.bonus_page > a')->text();
-    $bonusCode = $crawler->filter('.about-casino__info dl dd')->text();
+    $title = $crawler->filter('.vcard h1')->text();
+    $description = $crawler->filter('.tagline b')->text();
+/*    $bonusCode = $crawler->filter('.about-casino__info dl dd')->text();
     $players = $crawler->filter('.about-casino__info dl dd')->eq(2)->text();
     $validUntil = $crawler->filter('.about-casino__info dl dd')->eq(3)->text();
     preg_match('/^([0-9]{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])/', $validUntil, $matches);
@@ -74,30 +77,30 @@ foreach($pageUrls as $url) {
         }catch (\Exception $exception) {
             $maxCashOut = "";
         }
-    }
+    }*/
 
     $data = [
         'title' => $title,
         'url' => $url,
-        'bonus_code' => $bonusCode,
+        'locale' => $locale,
+        'description' => $description,
+/*        'bonus_code' => $bonusCode,
         'players' => $players,
         'valid_until' => $validUntil,
         'wagering' => $wagering,
-        'max_cash_out' => $maxCashOut,
+        'max_cash_out' => $maxCashOut,*/
     ];
 
     dump($data);
 
 
-    /*$data = [
-        'title' => $title,
-        'url' => $url,
-        'bonus_codes' => $bonusCode,
-        'bonus_types' => $bonusTypes,
-        'valid_until' => $validUntil,
-        'games_allowed' => $gamesAllowed,
-        'wagering' => $wagering,
-    ];*/
+    /*
+     * Title
+     * Type
+     * Recension
+     *
+     *
+     * */
 
 
 
