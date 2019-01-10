@@ -66,13 +66,19 @@ foreach($pageUrls as $url) {
 
     if(!$validUntil) {
         $wagering = $crawler->filter('.about-casino__info dl dd')->eq(3)->text();
+        $maxCashOut = $crawler->filter('.about-casino__info dl dd')->eq(4)->text();
+
     } else {
         try {
             $wagering = $crawler->filter('.about-casino__info dl dd')->eq(4)->text();
         }catch (\Exception $exception) {
             $wagering = "";
         }
-
+        try {
+            $maxCashOut = $crawler->filter('.about-casino__info dl dd')->eq(5)->text();
+        }catch (\Exception $exception) {
+            $maxCashOut = "";
+        }
     }
 
     $data = [
@@ -82,6 +88,7 @@ foreach($pageUrls as $url) {
         'players' => $players,
         'valid_until' => $validUntil,
         'wagering' => $wagering,
+        'max_cash_out' => $maxCashOut,
     ];
 
     dump($data);
