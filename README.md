@@ -7,6 +7,19 @@ https://casinobonus2.co/
 List of apartment sites:
 amoma
 booking
+hotels
+accorhotels
+agoda
+
+Job sites
+Ritelefax - burza
+njuskalo
+jooble
+index posao
+moj-posao
+posao.hr
+
+
 
 
 
