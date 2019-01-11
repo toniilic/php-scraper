@@ -20,18 +20,20 @@ $lastScrapedUrl = ""; // TODO: get last scraped url from database
 
 
 
-$ritelefaxScraper = new RitelefaxUrlScraper($client);
-$pageUrls = $ritelefaxScraper->scrapeForUrls(3,
-    "https://burza.com.hr/oglasi/posao-ponuda?oglasivac=0&q=&f=0&pf=&pt=&stranica=1"
+$mojPosaoScraper = new MojPosaoUrlScraper($client);
+$pageUrls = $mojPosaoScraper->scrapeForUrls(10,
+    "https://www.moj-posao.net/Pretraga-Poslova/?keyword=&area=9&category="
 );
-//dump($pageUrls);
+dump($pageUrls);
 
 
-$ritelefaxPageScraper = new RitelefaxPageScraper($client);
-$data = $ritelefaxPageScraper->scrapeUrls($pageUrls, "Primorsko-goranska");
+$mojPosaoPageScraper = new MojPosaoPageScraper($client);
+$data = $mojPosaoPageScraper
+    ->scrapeUrls($pageUrls,
+        'Primorsko-goranska');
 dump($data);
 
-class RitelefaxPageScraper {
+class MojPosaoPageScraper {
     protected $client;
     protected $crawler;
 
@@ -54,26 +56,25 @@ class RitelefaxPageScraper {
     public function scrapePage($pageUrl, $region)
     {
         $this->crawler = $this->client->request('GET', $pageUrl);
-        $title = $this->crawler->filter('.col-md-9.left-zero h2')->text();
-        $description = $this->crawler->filter('.col-md-5.opis-oglasa p')->text();
+        $title = $this->crawler->filter('#page-title h1')->text();
+        $title = trim($title);
 
         $data = [
             'title' => $title,
-            'description' => $description,
             'region' => $region,
         ];
-
-        dump($data);
 
         return $data;
     }
 }
 
 
-class RitelefaxUrlScraper {
+class MojPosaoUrlScraper {
 
     protected $client;
     protected $crawler;
+    protected $url;
+    protected $currentPage;
 
     public function __construct($client)
     {
@@ -82,15 +83,18 @@ class RitelefaxUrlScraper {
 
     public function scrapeForUrls($pagesToTraverse = 10, $url)
     {
+        $this->url = $url;
+
         $pageUrls = array();
 
-        $this->crawler = $this->client->request('GET', $url);
+        $this->crawler = $this->client->request('GET', $this->url);
 
         for($i = 1; $i != $pagesToTraverse + 1; $i++) {
 
-            array_push($pageUrls, $this->scrapePageUrls());
+            $this->currentPage = $i;
+            $this->selectNextPage($i);
 
-            $this->selectNextPage($url, $i);
+            array_push($pageUrls, $this->scrapePageUrls());
         }
 
         $pageUrls = array_unique(flattenArray($pageUrls));
@@ -98,17 +102,26 @@ class RitelefaxUrlScraper {
         return $pageUrls;
     }
 
-    protected function selectNextPage($url, $i)
+    protected function selectNextPage($i)
     {
-        $url = substr_replace($url ,"", -1);
-        $url = $url . $i;
+        if($i > 1) {
+            $url = $this->url . '&page=' . $i;
+        } else {
+            $url = $this->url;
+        }
+
         $this->crawler = $this->client->request('GET', $url);
     }
 
     protected function scrapePageUrls()
     {
+        if($this->currentPage > 1) {
+            $filter = '.job-title a';
+        } else {
+            $filter = '.job-position';
+        }
         $pageUrls = array();
-        $this->crawler->filter('.bhsi-txt h3 a')->each(function ($node) use (&$pageUrls) {
+        $this->crawler->filter($filter)->each(function ($node) use (&$pageUrls) {
 
             $linksCrawler = $this->crawler->selectLink(trim($node->text()));
             $link = $linksCrawler->link();
@@ -129,4 +142,14 @@ function flattenArray(array $array) {
     $return = array();
     array_walk_recursive($array, function($a) use (&$return) { $return[] = $a; });
     return $return;
+}
+
+function endsWith($haystack, $needle)
+{
+    $length = strlen($needle);
+    if ($length == 0) {
+        return true;
+    }
+
+    return (substr($haystack, -$length) === $needle);
 }

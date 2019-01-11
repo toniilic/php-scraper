@@ -21,5 +21,9 @@ posao.hr
 
 
 
+hackernews|reddit|wiki
+
+
+
 
 
