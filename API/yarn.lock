@@ -590,7 +590,7 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
-"@symfony/webpack-encore@^0.22.0":
+"@symfony/webpack-encore@^0.22.4":
   version "0.22.4"
   resolved "https://registry.yarnpkg.com/@symfony/webpack-encore/-/webpack-encore-0.22.4.tgz#249609c784706aa3dac9243c55ac4ec667a26d6e"
   integrity sha512-G324ofg+ThJhGT6BZhODbXMkb7QzL1HcL8O5iXlyNnk3/Bzha3XuV34/TzfWwIaRjIaJrD4CN4x9DNB1weqJLQ==
@@ -6183,7 +6183,7 @@ webpack-manifest-plugin@^2.0.2:
     lodash ">=3.5 <5"
     tapable "^1.0.0"
 
-webpack-notifier@^1.6.0:
+webpack-notifier@^1.7.0:
   version "1.7.0"
   resolved "https://registry.yarnpkg.com/webpack-notifier/-/webpack-notifier-1.7.0.tgz#4e03ea3ba1c0588d863935363f145d067815068a"
   integrity sha512-L3UKrl500xk0VDYKkwQxy5/BPhBWsZ2xHsAx2Qe3dVKYUEk9+y690RcNTMIUcVOK2fRgK7KK3PA4ccOq1h+fTg==
